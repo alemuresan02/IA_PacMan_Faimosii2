@@ -201,7 +201,7 @@ class GameState:
         return self.data.layout.walls
 
     def hasFood(self, x, y):
-        return self.data.food[x][y]
+        return self.data.food[x][y] #food exist
 
     def hasWall(self, x, y):
         return self.data.layout.walls[x][y]
@@ -325,7 +325,7 @@ class PacmanRules:
     These functions govern how pacman interacts with his environment under
     the classic game rules.
     """
-    PACMAN_SPEED=1
+    PACMAN_SPEED=1 #se seteaza viteza cu care ruleaza caracterul pacman
 
     def getLegalActions( state ):
         """
