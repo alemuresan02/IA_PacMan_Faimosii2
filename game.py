@@ -45,7 +45,7 @@ class Agent:
         must return an action from Directions.{North, South, East, West, Stop}
         """
         raiseNotDefined()
-
+#this is a class which initialize the movment of the pacman or the phantom
 class Directions:
     NORTH = 'North'
     SOUTH = 'South'

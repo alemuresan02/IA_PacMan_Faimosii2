@@ -18,7 +18,7 @@ from game import Directions
 import random
 from util import manhattanDistance
 import util
-
+# I want the phantoms to be called like in the game
 class GhostAgent( Agent ):
     def __init__( self, index ):
         self.index = index
