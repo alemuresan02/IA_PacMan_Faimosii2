@@ -171,8 +171,8 @@ class Grid:
         if initialValue not in [False, True]: raise Exception('Grids can only contain booleans')
         self.CELLS_PER_INT = 30
 
-        self.width = width #aici se seteaza ceva din clasa Grid, modificare facut de Cornel
-        self.height = height
+        self.width = width #aici se seteaza ceva din clasa Grid, modificare facuta de Cornel
+        self.height = height #aici se seteaza altceva din clasa Grid, modificare facuta de Cornel
         self.data = [[initialValue for y in range(height)] for x in range(width)]
         if bitRepresentation:
             self._unpackBits(bitRepresentation)
