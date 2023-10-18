@@ -121,15 +121,15 @@ class EightPuzzleState:
         """
         row, col = self.blankLocation
         if(move == 'up'):
-            newrow = row - 1
+            newrow = row - 1 #se muta cu un rand mai sus
             newcol = col
         elif(move == 'down'):
-            newrow = row + 1
+            newrow = row + 1 #se muta cu un rand mai jos
             newcol = col
-        elif(move == 'left'):
+        elif(move == 'left'): #se muta cu o coloana mai la stanga
             newrow = row
             newcol = col - 1
-        elif(move == 'right'):
+        elif(move == 'right'): #se muta cu o coloana mai la dreapta
             newrow = row
             newcol = col + 1
         else:
