@@ -13,7 +13,7 @@
 
 
 # imports from python standard library
-import grading
+import grading #importa biblioteca grading
 import imp
 import optparse
 import os
