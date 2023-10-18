@@ -84,7 +84,7 @@ def readCommand(argv):
 
 
 # confirm we should author solution files
-def confirmGenerate():
+def confirmGenerate(): #functie de confirmare generare
     print('WARNING: this action will overwrite any solution files.')
     print('Are you sure you want to proceed? (yes/no)')
     while True:
