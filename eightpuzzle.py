@@ -98,7 +98,7 @@ class EightPuzzleState:
         moves = []
         row, col = self.blankLocation
         if(row != 0):
-            moves.append('up')
+            moves.append('up')    # alipim la lista de mutari mesajul 'up'
         if(row != 2):
             moves.append('down')
         if(col != 0):
