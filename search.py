@@ -113,8 +113,42 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    # Initialize the stack to keep track of nodes to explore
+    stack = util.Stack()
+
+    # Create a set to keep track of visited nodes
+    visited = set()
+
+    # Push the start state onto the stack as a tuple (state, actions)
+    stack.push((problem.getStartState(), []))
+
+    while not stack.isEmpty():
+        state, actions = stack.pop()
+
+        # Check if the current state is the goal state
+        if problem.isGoalState(state):
+            return actions
+
+        # Mark the current state as visited
+        visited.add(state)
+
+        # Get the next possible actions from the current state
+        possible_actions = problem.getActions(state)
+
+        for action in possible_actions:
+            # Get the next state and calculate the cost
+            next_state = problem.getNextState(state, action)
+            cost = problem.getActionCost(state, action, next_state)
+
+            # Check if the next state has not been visited
+            if next_state not in visited:
+                # Push the next state and actions onto the stack
+                stack.push((next_state, actions + [action]))
+
+    # If the stack is empty and no goal state is found, return an empty list
+    return []
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
