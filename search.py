@@ -196,10 +196,51 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    """
+    Search the node that has the lowest combined cost and heuristic first.
+
+    problem: SearchProblem
+    heuristic: A heuristic function that estimates the cost to the goal.
+
+    Returns a list of actions that reaches the goal.
+    """
+
+    # Create a priority queue (or priority queue implementation) to store the states and their costs
+    pq = util.PriorityQueue()
+    start_state = problem.getStartState()
+    start_cost = 0  # Cost to reach the start state
+    start_heuristic = heuristic(start_state, problem)  # Heuristic estimate for the start state
+    start_total_cost = start_cost + start_heuristic  # Total cost
+
+    # Initialize a dictionary to store the cost to reach each state
+    cost_to_state = {start_state: start_cost}
+
+    # Push the start state, actions, and total cost onto the priority queue
+    pq.push((start_state, [], start_cost), start_total_cost)
+
+    while not pq.isEmpty():
+        current_state, actions, current_cost = pq.pop()
+
+        if problem.isGoalState(current_state):
+            # If the current state is the goal state, return the list of actions
+            return actions
+
+        if current_cost <= cost_to_state[current_state]:
+            # Expand the current state
+            for child_state, action, step_cost in problem.expand(current_state):
+                total_cost = current_cost + step_cost + heuristic(child_state, problem)
+
+                if child_state not in cost_to_state or total_cost < cost_to_state[child_state]:
+                    # Update the cost to reach the child state
+                    cost_to_state[child_state] = total_cost
+
+                    # Push the child state, actions, and total cost onto the priority queue
+                    pq.push((child_state, actions + [action], current_cost + step_cost), total_cost)
+
+    # If no solution is found, return an empty list
+    return []
 
 
 # Abbreviations
