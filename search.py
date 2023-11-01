@@ -114,9 +114,9 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
     "* YOUR CODE HERE *"
-    nodesToBeExplored = util.Stack()  # stiva pentru nodurile pe care trebuie sa le exploram
-    visited = []  # lista pentru a tine evidenta starilor vizitate
-    initial_state = problem.getStartState()  # starea initiala
+    nodesToBeExplored = util.Stack()             # stiva pentru nodurile pe care trebuie sa le exploram
+    visited = []                                 # lista pentru a tine evidenta starilor vizitate
+    initial_state = problem.getStartState()      # starea initiala
     nodesToBeExplored.push((initial_state, []))  # punem pe stiva starea initiala si o lista goala de actiuni
 
     # exploram pana cand stiva este goala
@@ -124,14 +124,14 @@ def depthFirstSearch(problem):
 
         current, actionsToDo = nodesToBeExplored.pop()  # starea curenta si actiunile ei
 
-        # verificare daca starea curenta este starea scop si daca da return la actiunile ei
+        # verificare daca starea curenta este starea ceruta si daca da se da return la actiunile ei
         if (problem.isGoalState(current)):
             return actionsToDo
 
-        # daca starea nu e scop si nu a fost vizitata
+        # daca starea nu este cea ceruta si nu a fost vizitata
         if (current not in visited):
 
-            visited.append(current)  # o vizitam
+            visited.append(current)          # o vizitam
             nodes = problem.expand(current)  # expandam pentru a obtine starile urmatoare
 
             for next, action, _ in nodes:
@@ -144,9 +144,9 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     nodesToBeExplored = util.Queue()  # coada pentru nodurile pe care trebuie explorate
-    visited = set()  # crearea unui set in care o sa punem elemente neordonate unice care au fost vizitate in timpul algoritmului
+    visited = set()                   # crearea unui set in care vom pune elemente neordonate unice care au fost vizitate in timpul algoritmului
 
-    initial_state = problem.getStartState()  # starea initiala a algoritmului
+    initial_state = problem.getStartState()      # starea initiala a algoritmului
     nodesToBeExplored.push((initial_state, []))  # punem in coada starea initiala si o lista de actiuni
 
     # se cauta alt nod pana cand se ajunge la sfarsitul cozii
@@ -154,19 +154,17 @@ def breadthFirstSearch(problem):
 
         current, actionsToDo = nodesToBeExplored.pop()  # current primeste nodul din coada iar actionsToDo primeste lista cu actiuni de facut din punctul respectiv
 
-        if problem.isGoalState(
-                current):  # verificam daca am ajuns in punctul final iar daca nu returnam o lista cu actiuni care reprezinta cheia spre solutie
+        if problem.isGoalState(current):  # verificam daca am ajuns in punctul final iar daca nu returnam o lista cu actiuni care reprezinta cheia spre solutie
             return actionsToDo
 
-        if current not in visited:  # verifica daca nodul curent nu este in setul deja vizitat
-            visited.add(current)  # marchezi nodul ca si vizitat
-            nodes = problem.expand(current)  # cauti copiii parintelui, expandandu-l
+        if current not in visited:                        # verifica daca nodul curent nu este in setul deja vizitat
+            visited.add(current)                          # marcheaza nodul ca si vizitat
+            nodes = problem.expand(current)               # cauta copiii parintelui, expandandu-l
 
-            for next_state, action, _ in nodes:  # parcurgi drumurile obtinute in urma expandarii
-                new_actionsToDo = actionsToDo + [
-                    action]  # adaugi in lista de actiuni actiunile corespunzatoare ale fiecarui nod
+            for next_state, action, _ in nodes:           # parcurge drumurile noi obtinute
+                new_actionsToDo = actionsToDo + [action]  # adauga in lista de actiuni actiunile corespunzatoare fiecarui nod
                 nodesToBeExplored.push(
-                    (next_state, new_actionsToDo))  # adaugi in coada nodurile copii si actiunile din acestea
+                    (next_state, new_actionsToDo))        # adauga in coada nodurile copii si actiunile din acestea
 
     util.raiseNotDefined()
 
@@ -183,28 +181,28 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "* YOUR CODE HERE *"
     source = problem.getStartState() # accesam nodul sursa
-    if problem.isGoalState(source): # verificam daca nodul sursa este si destinatie
+    if problem.isGoalState(source):  # verificam daca nodul sursa este si destinatie
         return []
 
-    reached = []    # o lista pentru nodurile pe care le-am expandat pana in prezent
+    reached = []    # lista pentru nodurile pe care le-am expandat pana in prezent
 
-    frontier = util.PriorityQueue() # o lista de prioritate pentru nodurile pe care trebuie sa le procesam
-    frontier.push((source, [], 0), 0) # initializam frontiera cu nodul sursa
+    frontier = util.PriorityQueue() # lista de prioritati pentru nodurile pe care trebuie procesate
+    frontier.push((source, [], 0), 0) # initializam lista cu nodul sursa
 
-    while not frontier.isEmpty(): # cat timp mai sunt noduri de procesat
+    while not frontier.isEmpty(): # cat timp sunt noduri de procesat
 
         current_node, actions, current_cost = frontier.pop() # procesam nodul cu costul cel mai mic
 
         if current_node not in reached: # daca nodul nu a fost expandat pana acum il expandam
             reached.append(current_node)
 
-            if problem.isGoalState(current_node): #verificam daca reprezinta nodul destinatie
+            if problem.isGoalState(current_node): # verificam daca nodul curent reprezinta nodul destinatie
                 return actions # returnam lista de actiuni pentru a ajunge din sursa in destinatie
 
             for child, action, cost in problem.expand(current_node): # pentru fiecare copil al nodului
-                child_action = actions + [action] # actualizam actiunile
+                child_action = actions + [action]   # actualizam actiunile
                 child_cost = current_cost + cost    # actualizam costul pentru a ajunge din sursa in nodul copil
-                total_cost = child_cost + heuristic(child,problem) # actualizam costul total cu tot cu functie heuristica
+                total_cost = child_cost + heuristic(child,problem) # actualizam costul total
                 frontier.push((child, child_action, child_cost),total_cost) # introducem nodul copil in frontiera pentru a fi expandat
     util.raiseNotDefined()
 
@@ -220,16 +218,16 @@ def uniformCostSearch(problem):
     while not pQueue.isEmpty():  # cat timp mai avem noduri de procesat
         currentState, actions, cost = pQueue.pop()  # procesam nodul cu costul cel mai mic
 
-        if currentState not in exploredNodes:  # daca nodul curent nu este in lista nodurilor expandate il punem acum
+        if currentState not in exploredNodes:  # daca nodul curent nu este in lista nodurilor expandate se adauga
             exploredNodes.add(currentState)
 
-            if problem.isGoalState(currentState):  # daca nodul este nodul destinatie
+            if problem.isGoalState(currentState):  # daca nodul este destinatia
                 return actions  # returnam lista de actiuni pt a ajunge de la nodul sursa la cel destinatie
 
             for succState, succAction, succCost in problem.expand(currentState):  # pt fiecare succesor al nodului
-                newAction = actions + [succAction]  # se actualizeaza actiunea/
+                newAction = actions + [succAction]  # se actualizeaza actiunea
                 newCost = cost + succCost  # se actualizeaza costul
-                newNode = (succState, newAction, newCost)  # cream un nod nou cu aceste atributii
+                newNode = (succState, newAction, newCost)  # este creat un nod nou cu aceste atribute
                 pQueue.push(newNode, newCost)  # intoducem nodul in frontiera pt a fi expandat
 
     return actions
