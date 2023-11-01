@@ -113,80 +113,62 @@ def depthFirstSearch(problem):
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     """
+    "* YOUR CODE HERE *"
+    nodesToBeExplored = util.Stack()  # stiva pentru nodurile pe care trebuie sa le exploram
+    visited = []  # lista pentru a tine evidenta starilor vizitate
+    initial_state = problem.getStartState()  # starea initiala
+    nodesToBeExplored.push((initial_state, []))  # punem pe stiva starea initiala si o lista goala de actiuni
 
-    # Initialize the stack to keep track of nodes to explore
-    stack = util.Stack()
+    # exploram pana cand stiva este goala
+    while (nodesToBeExplored.isEmpty() != True):
 
-    # Create a set to keep track of visited nodes
-    visited = set()
+        current, actionsToDo = nodesToBeExplored.pop()  # starea curenta si actiunile ei
 
-    # Push the start state onto the stack as a tuple (state, actions)
-    stack.push((problem.getStartState(), []))
+        # verificare daca starea curenta este starea scop si daca da return la actiunile ei
+        if (problem.isGoalState(current)):
+            return actionsToDo
 
-    while not stack.isEmpty():
-        state, actions = stack.pop()
+        # daca starea nu e scop si nu a fost vizitata
+        if (current not in visited):
 
-        # Check if the current state is the goal state
-        if problem.isGoalState(state):
-            return actions
+            visited.append(current)  # o vizitam
+            nodes = problem.expand(current)  # expandam pentru a obtine starile urmatoare
 
-        # Mark the current state as visited
-        visited.add(state)
+            for next, action, _ in nodes:
+                new_actionsToDo = actionsToDo + [action]
+                nodesToBeExplored.push((next,
+                                        new_actionsToDo))  # introducem urmatoarea stare si noua lista de actiuni in stiva pentru a fi explorata
 
-        # Get the next possible actions from the current state
-        possible_actions = problem.getActions(state)
-
-        for action in possible_actions:
-            # Get the next state and calculate the cost
-            next_state = problem.getNextState(state, action)
-            cost = problem.getActionCost(state, action, next_state)
-
-            # Check if the next state has not been visited
-            if next_state not in visited:
-                # Push the next state and actions onto the stack
-                stack.push((next_state, actions + [action]))
-
-    # If the stack is empty and no goal state is found, return an empty list
-    return []
+    util.raiseNotDefined()
 
 
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
+    nodesToBeExplored = util.Queue()  # coada pentru nodurile pe care trebuie explorate
+    visited = set()  # crearea unui set in care o sa punem elemente neordonate unice care au fost vizitate in timpul algoritmului
 
-    # Initialize the queue to keep track of nodes to explore
-    queue = util.Queue()
+    initial_state = problem.getStartState()  # starea initiala a algoritmului
+    nodesToBeExplored.push((initial_state, []))  # punem in coada starea initiala si o lista de actiuni
 
-    # Create a set to keep track of visited nodes
-    visited = set()
+    # se cauta alt nod pana cand se ajunge la sfarsitul cozii
+    while (nodesToBeExplored.isEmpty() == False):
 
-    # Push the start state onto the queue as a tuple (state, actions)
-    queue.push((problem.getStartState(), []))
+        current, actionsToDo = nodesToBeExplored.pop()  # current primeste nodul din coada iar actionsToDo primeste lista cu actiuni de facut din punctul respectiv
 
-    while not queue.isEmpty():
-        state, actions = queue.pop()
+        if problem.isGoalState(
+                current):  # verificam daca am ajuns in punctul final iar daca nu returnam o lista cu actiuni care reprezinta cheia spre solutie
+            return actionsToDo
 
-        # Check if the current state is the goal state
-        if problem.isGoalState(state):
-            return actions
+        if current not in visited:  # verifica daca nodul curent nu este in setul deja vizitat
+            visited.add(current)  # marchezi nodul ca si vizitat
+            nodes = problem.expand(current)  # cauti copiii parintelui, expandandu-l
 
-        # Mark the current state as visited
-        visited.add(state)
+            for next_state, action, _ in nodes:  # parcurgi drumurile obtinute in urma expandarii
+                new_actionsToDo = actionsToDo + [
+                    action]  # adaugi in lista de actiuni actiunile corespunzatoare ale fiecarui nod
+                nodesToBeExplored.push(
+                    (next_state, new_actionsToDo))  # adaugi in coada nodurile copii si actiunile din acestea
 
-        # Get the next possible actions from the current state
-        possible_actions = problem.getActions(state)
-
-        for action in possible_actions:
-            # Get the next state and calculate the cost
-            next_state = problem.getNextState(state, action)
-            cost = problem.getActionCost(state, action, next_state)
-
-            # Check if the next state has not been visited
-            if next_state not in visited:
-                # Push the next state and actions onto the queue
-                queue.push((next_state, actions + [action]))
-
-    # If the queue is empty and no goal state is found, return an empty list
-    return []
+    util.raiseNotDefined()
 
 
 def nullHeuristic(state, problem=None):
@@ -198,52 +180,63 @@ def nullHeuristic(state, problem=None):
 
 
 def aStarSearch(problem, heuristic=nullHeuristic):
-    """
-    Search the node that has the lowest combined cost and heuristic first.
+    """Search the node that has the lowest combined cost and heuristic first."""
+    "* YOUR CODE HERE *"
+    source = problem.getStartState() # accesam nodul sursa
+    if problem.isGoalState(source): # verificam daca nodul sursa este si destinatie
+        return []
 
-    problem: SearchProblem
-    heuristic: A heuristic function that estimates the cost to the goal.
+    reached = []    # o lista pentru nodurile pe care le-am expandat pana in prezent
 
-    Returns a list of actions that reaches the goal.
-    """
+    frontier = util.PriorityQueue() # o lista de prioritate pentru nodurile pe care trebuie sa le procesam
+    frontier.push((source, [], 0), 0) # initializam frontiera cu nodul sursa
 
-    # Create a priority queue (or priority queue implementation) to store the states and their costs
-    pq = util.PriorityQueue()
-    start_state = problem.getStartState()
-    start_cost = 0  # Cost to reach the start state
-    start_heuristic = heuristic(start_state, problem)  # Heuristic estimate for the start state
-    start_total_cost = start_cost + start_heuristic  # Total cost
+    while not frontier.isEmpty(): # cat timp mai sunt noduri de procesat
 
-    # Initialize a dictionary to store the cost to reach each state
-    cost_to_state = {start_state: start_cost}
+        current_node, actions, current_cost = frontier.pop() # procesam nodul cu costul cel mai mic
 
-    # Push the start state, actions, and total cost onto the priority queue
-    pq.push((start_state, [], start_cost), start_total_cost)
+        if current_node not in reached: # daca nodul nu a fost expandat pana acum il expandam
+            reached.append(current_node)
 
-    while not pq.isEmpty():
-        current_state, actions, current_cost = pq.pop()
+            if problem.isGoalState(current_node): #verificam daca reprezinta nodul destinatie
+                return actions # returnam lista de actiuni pentru a ajunge din sursa in destinatie
 
-        if problem.isGoalState(current_state):
-            # If the current state is the goal state, return the list of actions
-            return actions
+            for child, action, cost in problem.expand(current_node): # pentru fiecare copil al nodului
+                child_action = actions + [action] # actualizam actiunile
+                child_cost = current_cost + cost    # actualizam costul pentru a ajunge din sursa in nodul copil
+                total_cost = child_cost + heuristic(child,problem) # actualizam costul total cu tot cu functie heuristica
+                frontier.push((child, child_action, child_cost),total_cost) # introducem nodul copil in frontiera pentru a fi expandat
+    util.raiseNotDefined()
 
-        if current_cost <= cost_to_state[current_state]:
-            # Expand the current state
-            for child_state, action, step_cost in problem.expand(current_state):
-                total_cost = current_cost + step_cost + heuristic(child_state, problem)
 
-                if child_state not in cost_to_state or total_cost < cost_to_state[child_state]:
-                    # Update the cost to reach the child state
-                    cost_to_state[child_state] = total_cost
+def uniformCostSearch(problem):
+    pQueue = util.PriorityQueue()  # o lista de prioritate pt noduri
+    exploredNodes = set()  # o lista pt nodurile deja expandate
+    startState = problem.getStartState()  # nodul sursa
+    startNode = (startState, [], 0)
 
-                    # Push the child state, actions, and total cost onto the priority queue
-                    pq.push((child_state, actions + [action], current_cost + step_cost), total_cost)
+    pQueue.push(startNode, 0)  # initializam frontiera cu nodul sursa
 
-    # If no solution is found, return an empty list
-    return []
+    while not pQueue.isEmpty():  # cat timp mai avem noduri de procesat
+        currentState, actions, cost = pQueue.pop()  # procesam nodul cu costul cel mai mic
+
+        if currentState not in exploredNodes:  # daca nodul curent nu este in lista nodurilor expandate il punem acum
+            exploredNodes.add(currentState)
+
+            if problem.isGoalState(currentState):  # daca nodul este nodul destinatie
+                return actions  # returnam lista de actiuni pt a ajunge de la nodul sursa la cel destinatie
+
+            for succState, succAction, succCost in problem.expand(currentState):  # pt fiecare succesor al nodului
+                newAction = actions + [succAction]  # se actualizeaza actiunea/
+                newCost = cost + succCost  # se actualizeaza costul
+                newNode = (succState, newAction, newCost)  # cream un nod nou cu aceste atributii
+                pQueue.push(newNode, newCost)  # intoducem nodul in frontiera pt a fi expandat
+
+    return actions
 
 
 # Abbreviations
 bfs = breadthFirstSearch
 dfs = depthFirstSearch
 astar = aStarSearch
+ucs = uniformCostSearch
